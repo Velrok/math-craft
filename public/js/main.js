@@ -8,10 +8,10 @@ let puzzles = [
   {sector: 1, solved: false},
   {sector: 2, solved: false},
   {sector: 3, solved: false},
-  {sector: 4, solved: true},
+  {sector: 4, solved: false},
   {sector: 5, solved: false},
   {sector: 6, solved: false},
-  {sector: 7, solved: true},
+  {sector: 7, solved: false},
   {sector: 8, solved: false},
   {sector: 9, solved: false}
 ]
@@ -32,24 +32,62 @@ function forEachPuzzle(callback, useWidth = width, useHeight = height) {
     });
 }
 
-async function setup() {
-    // Seed with current date (same for whole day)
-    let today = new Date();
-    let seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-    randomSeed(seed);
-
-    // Generate times tables (2-10)
-    for (let i = 2; i <= 10; i++) {
+function generateTimesTables(start=2, end=10) {
+    const tables = [];
+    for (let i = start; i <= end; i++) {
         for (let j = 1; j <= 10; j++) {
-            timesTables.push({
+            tables.push({
                 query: `${i} × ${j}`,
                 result: i * j
             });
         }
     }
+    return tables;
+}
 
+function setSeed() {
+    let today = new Date();
+    let seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    randomSeed(seed);
+}
+
+function drawUnsolvedSector(puzzle, index, x, y, cellWidth, cellHeight) {
+    // Draw blurred sector (scaled to canvas dimensions)
+    image(blurredSectors[index], x, y, cellWidth, cellHeight);
+
+    // Add glassy overlay
+    fill(255, 255, 255, 60);
+    rect(x, y, cellWidth, cellHeight);
+
+    // Draw challenge query text
+    if (puzzle.challenge) {
+        fill(0);
+        textSize(48);
+        textAlign(CENTER, CENTER);
+        text(puzzle.challenge.query, x + cellWidth / 2, y + cellHeight / 2);
+    }
+}
+
+function drawGridLines(x, y, cellWidth, cellHeight) {
+    noFill();
+    stroke(255, 255, 255, 100);
+    strokeWeight(1);
+    rect(x, y, cellWidth, cellHeight);
+}
+
+async function setup() {
+    // Seed with current date (same for whole day)
+    setSeed()
+
+    // Generate times tables (2-10)
+    timesTables = generateTimesTables();
+
+    // Assign unique challenges to each puzzle
+    let availableChallenges = [...timesTables];
     puzzles.forEach((puzzle, idx) => {
-        puzzle.challenge = random(timesTables)
+        let challengeIndex = floor(random(availableChallenges.length));
+        puzzle.challenge = availableChallenges[challengeIndex];
+        availableChallenges.splice(challengeIndex, 1);
     })
 
     let iotd = random(images);
@@ -82,21 +120,32 @@ function draw() {
     }
 
     // Draw each puzzle sector
+    const allSolved = puzzles.every(p => p.solved);
+
     forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
         // Draw sector overlay (only if not solved)
         if (!puzzle.solved) {
-            // Draw blurred sector (scaled to canvas dimensions)
-            image(blurredSectors[index], x, y, cellWidth, cellHeight);
-
-            // Add glassy overlay
-            fill(255, 255, 255, 60);
-            rect(x, y, cellWidth, cellHeight);
+            drawUnsolvedSector(puzzle, index, x, y, cellWidth, cellHeight);
         }
 
-        // Draw grid lines
-        noFill();
-        stroke(255, 255, 255, 100);
-        strokeWeight(1);
-        rect(x, y, cellWidth, cellHeight);
+        if (!allSolved) {
+            drawGridLines(x, y, cellWidth, cellHeight);
+        }
+    });
+}
+
+function mousePressed() {
+    forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
+        // Check if click is within this sector and it's unsolved
+        if (!puzzle.solved &&
+            mouseX >= x && mouseX < x + cellWidth &&
+            mouseY >= y && mouseY < y + cellHeight) {
+
+            let answer = prompt(puzzle.challenge.query + " = ?", "");
+
+            if (answer !== null && parseInt(answer) === puzzle.challenge.result) {
+                puzzle.solved = true;
+            }
+        }
     });
 }
