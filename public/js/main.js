@@ -1,14 +1,16 @@
 const images = ['castle.webp', 'farm.webp', 'painting.webp', 'shipwreck.webp'];
 let imageOfTheDay;
+let blurredSectors = [];
+const blur = 30
 
 let puzzles = [
   {sector: 1, solved: false},
   {sector: 2, solved: false},
   {sector: 3, solved: false},
-  {sector: 4, solved: false},
+  {sector: 4, solved: true},
   {sector: 5, solved: false},
   {sector: 6, solved: false},
-  {sector: 7, solved: false},
+  {sector: 7, solved: true},
   {sector: 8, solved: false},
   {sector: 9, solved: false}
 ]
@@ -28,6 +30,26 @@ async function setup() {
     background(24);
     textAlign(CENTER, CENTER);
     textSize(32);
+
+    // Pre-create blurred sector images
+    const cols = 3;
+    const rows = 3;
+    const cellWidth = width / cols;
+    const cellHeight = height / rows;
+
+    for (let i = 0; i < 9; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = col * cellWidth;
+        const y = row * cellHeight;
+
+        // Create a copy of the sector and blur it
+        let sectorImg = createImage(cellWidth, cellHeight);
+        sectorImg.copy(imageOfTheDay, x, y, cellWidth, cellHeight, 0, 0, cellWidth, cellHeight);
+        sectorImg.filter(BLUR, blur);
+
+        blurredSectors.push(sectorImg);
+    }
 }
 
 function draw() {
@@ -56,14 +78,18 @@ function draw() {
 
         // Draw sector overlay (only if not solved)
         if (!puzzle.solved) {
-            fill(0, 0, 0, 180);
+            // Draw blurred sector
+            image(blurredSectors[index], x, y);
+
+            // Add glassy overlay
+            fill(255, 255, 255, 60);
             rect(x, y, cellWidth, cellHeight);
         }
 
         // Draw grid lines
         noFill();
         stroke(255, 255, 255, 100);
-        strokeWeight(2);
+        strokeWeight(1);
         rect(x, y, cellWidth, cellHeight);
     });
 }
