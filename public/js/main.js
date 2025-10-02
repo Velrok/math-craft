@@ -1,7 +1,8 @@
 const images = ['castle.webp', 'farm.webp', 'painting.webp', 'shipwreck.webp'];
 let imageOfTheDay;
 let blurredSectors = [];
-const blur = 30
+const blur = 30;
+let timesTables = [];
 
 let puzzles = [
   {sector: 1, solved: false},
@@ -20,6 +21,16 @@ async function setup() {
     let today = new Date();
     let seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     randomSeed(seed);
+
+    // Generate times tables (2-10)
+    for (let i = 2; i <= 10; i++) {
+        for (let j = 1; j <= 10; j++) {
+            timesTables.push({
+                query: `${i} × ${j}`,
+                result: i * j
+            });
+        }
+    }
 
     let iotd = random(images);
     console.log('Loading image:', iotd);
