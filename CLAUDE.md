@@ -4,57 +4,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MathCraft is an HTML5 Progressive Web App (PWA) built with:
+MathCraft is a primary school times tables practice game built as an HTML5 Progressive Web App (PWA):
 - Pure HTML5/CSS/JavaScript (no compilation step)
-- p5.js for graphics and interactive math visualizations
-- TypeScript for type safety
-- PWA capabilities for offline usage
+- p5.js for graphics and interactive visualizations
+- PWA manifest configured for offline usage (service worker not yet implemented)
 
-## Development Environment
+## Development Commands
 
-Since this is a no-compilation project, development is straightforward:
-- Run `./scripts/serve` to start development server with auto-reload on http://localhost:8080
-- Alternatively, serve files locally using any static server (e.g., `python -m http.server` or `npx serve`)
-- Open in browser for testing
-- No build process required
+Start development server with auto-reload:
+```bash
+./scripts/serve
+```
 
-## Project Structure
+This runs `live-server` on http://localhost:8080, auto-installs if not present.
 
-This project follows a simple file structure appropriate for a client-side only application:
-- Static HTML/CSS/JS files served directly
-- TypeScript files should be compiled to JavaScript for browser consumption
-- p5.js sketches likely organized by mathematical concept or visualization type
+## Project Architecture
 
-## Key Technologies
+### File Structure
+```
+public/                    # All source files live here (served directly)
+├── index.html            # Main HTML entry point
+├── app.css               # Global styles
+├── manifest.json         # PWA manifest with icons and metadata
+└── js/
+    └── main.js           # p5.js sketch (setup/draw functions)
+```
 
-### p5.js Integration
-- Mathematical visualizations and interactive graphics
-- Canvas-based rendering for mathematical concepts
-- Event handling for user interactions with math problems/visualizations
-- Reference documentation: https://p5js.org/reference/
+### p5.js Architecture
+- Uses global mode with p5.js loaded from CDN (v2.0.5)
+- Canvas inserted into `#sketch-container` div
+- `setup()` creates 800x600 canvas
+- `draw()` runs continuously for animations/interactions
+- p5.js reference: https://p5js.org/reference/
 
-### PWA Features
-- Service worker for offline functionality
-- Web app manifest for installability
-- Local storage for saving progress/settings
+### PWA Configuration
+- Service worker registration code exists in index.html but `sw.js` not yet created
+- Manifest configured for portrait-primary orientation, theme color #2196F3
+- Icons defined for multiple sizes (72x72 through 512x512)
 
-### TypeScript Usage
-- Type safety for mathematical calculations and data structures
-- Interface definitions for math problems, user progress, etc.
-- Compile to JavaScript for browser execution
+## Development Notes
 
-## Development Workflow
-
-1. Edit TypeScript files as needed
-2. Compile TypeScript to JavaScript (if using tsc)
-3. Test in browser using local server
-4. Verify PWA functionality works offline
-5. Test mathematical calculations and visualizations thoroughly
-
-## Mathematical Focus Areas
-
-Based on the project name "MathCraft", expect to work with:
-- Interactive mathematical visualizations
-- Educational math content and problems
-- Geometric and algebraic representations
-- User progress tracking for learning
+- All files are static; edit and refresh browser to see changes
+- No build step, no TypeScript compilation (currently plain JavaScript)
+- When adding new JS files, reference them in index.html
+- For times tables game logic, implement in main.js or create separate modules
