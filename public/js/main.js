@@ -1,4 +1,30 @@
-const images = ['castle.webp', 'farm.webp', 'painting.webp', 'shipwreck.webp'];
+const images = [
+  'camp_day.png',
+  'camp_night.png',
+  'castle.webp',
+  'cloudy_climb.png',
+  'creeping_winter.png',
+  'echoing_void.png',
+  'farm.webp',
+  'fauna_faire.png',
+  'flames_nether.png',
+  'heart_emote.png',
+  'hidden_depths.png',
+  'howling_peaks.png',
+  'jungle_awakens.png',
+  'luminous_night.png',
+  'mini_monstrosities.png',
+  'painting.webp',
+  'pet_party.png',
+  'pets_flair.png',
+  'redstone_monstrosity_skin.png',
+  'seasonal_adventure.png',
+  'shipwreck.webp',
+  'tower.png',
+  'treasure.png',
+  'treetop_tangle.png',
+  'wildfire.png'
+];
 let imageOfTheDay;
 let blurredSectors = [];
 const blur = 50;
@@ -92,13 +118,28 @@ async function setup() {
 
     let iotd = random(images);
     console.log('Loading image:', iotd);
-    imageOfTheDay = await loadImage('/images/' + iotd);
 
-    let canvas = createCanvas(1024, 768);
+    // Create canvas and show loading message
+    // Use window dimensions and maintain 16:9 ratio
+    let canvasWidth = windowWidth;
+    let canvasHeight = windowWidth * 9 / 16;
+
+    // If height exceeds window height, scale based on height instead
+    if (canvasHeight > windowHeight) {
+        canvasHeight = windowHeight;
+        canvasWidth = windowHeight * 16 / 9;
+    }
+
+    let canvas = createCanvas(canvasWidth, canvasHeight);
+  
     canvas.parent('sketch-container');
     background(24);
+    fill(255);
     textAlign(CENTER, CENTER);
     textSize(32);
+    text('Loading image...', width / 2, height / 2);
+
+    imageOfTheDay = await loadImage('/images/' + iotd);
 
     // Pre-create blurred sector images based on original image dimensions
     forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
