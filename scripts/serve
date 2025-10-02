@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Simple development server with auto-reload for MathCraft
+# Serves the public folder with live reload on file changes
+
+echo "Starting MathCraft development server..."
+echo "Serving public folder on http://localhost:8080"
+echo "Press Ctrl+C to stop"
+
+# Check if live-server is installed globally
+if ! command -v live-server &> /dev/null; then
+    echo "Installing live-server globally..."
+    npm install -g live-server
+fi
+
+# Start live-server with public folder as root
+live-server public --port=8080 --open
