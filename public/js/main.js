@@ -16,6 +16,22 @@ let puzzles = [
   {sector: 9, solved: false}
 ]
 
+function forEachPuzzle(callback, useWidth = width, useHeight = height) {
+    const cols = 3;
+    const rows = 3;
+    const cellWidth = useWidth / cols;
+    const cellHeight = useHeight / rows;
+
+    puzzles.forEach((puzzle, index) => {
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        const x = col * cellWidth;
+        const y = row * cellHeight;
+
+        callback(puzzle, index, x, y, cellWidth, cellHeight);
+    });
+}
+
 async function setup() {
     // Seed with current date (same for whole day)
     let today = new Date();
@@ -47,26 +63,14 @@ async function setup() {
     textSize(32);
 
     // Pre-create blurred sector images based on original image dimensions
-    const cols = 3;
-    const rows = 3;
-    const imgWidth = imageOfTheDay.width;
-    const imgHeight = imageOfTheDay.height;
-    const cellWidth = imgWidth / cols;
-    const cellHeight = imgHeight / rows;
-
-    for (let i = 0; i < 9; i++) {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = col * cellWidth;
-        const y = row * cellHeight;
-
+    forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
         // Create a copy of the sector and blur it
         let sectorImg = createImage(cellWidth, cellHeight);
         sectorImg.copy(imageOfTheDay, x, y, cellWidth, cellHeight, 0, 0, cellWidth, cellHeight);
         sectorImg.filter(BLUR, blur);
 
         blurredSectors.push(sectorImg);
-    }
+    }, imageOfTheDay.width, imageOfTheDay.height);
 }
 
 function draw() {
@@ -77,22 +81,8 @@ function draw() {
         image(imageOfTheDay, 0, 0, width, height);
     }
 
-    // Calculate grid dimensions based on canvas (which scales the image)
-    const cols = 3;
-    const rows = 3;
-    const cellWidth = width / cols;
-    const cellHeight = height / rows;
-
     // Draw each puzzle sector
-    puzzles.forEach((puzzle, index) => {
-        // Convert flat index to row/col
-        const col = index % cols;
-        const row = Math.floor(index / cols);
-
-        // Calculate position on canvas
-        const x = col * cellWidth;
-        const y = row * cellHeight;
-
+    forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
         // Draw sector overlay (only if not solved)
         if (!puzzle.solved) {
             // Draw blurred sector (scaled to canvas dimensions)
