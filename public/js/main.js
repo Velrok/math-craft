@@ -1,6 +1,18 @@
 const images = ['castle.webp', 'farm.webp', 'painting.webp', 'shipwreck.webp'];
 let imageOfTheDay;
 
+let puzzles = [
+  {sector: 1, solved: false},
+  {sector: 2, solved: false},
+  {sector: 3, solved: false},
+  {sector: 4, solved: false},
+  {sector: 5, solved: false},
+  {sector: 6, solved: false},
+  {sector: 7, solved: false},
+  {sector: 8, solved: false},
+  {sector: 9, solved: false}
+]
+
 async function setup() {
     // Seed with current date (same for whole day)
     let today = new Date();
@@ -21,10 +33,37 @@ async function setup() {
 function draw() {
     background(24);
 
+    // Draw background image
     if (imageOfTheDay) {
         image(imageOfTheDay, 0, 0, width, height);
     }
 
-    fill(33, 150, 243);
-    text('Welcome to MathCraft', width / 2, height / 2 + 20);
+    // Calculate grid dimensions
+    const cols = 3;
+    const rows = 3;
+    const cellWidth = width / cols;
+    const cellHeight = height / rows;
+
+    // Draw each puzzle sector
+    puzzles.forEach((puzzle, index) => {
+        // Convert flat index to row/col
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+
+        // Calculate position
+        const x = col * cellWidth;
+        const y = row * cellHeight;
+
+        // Draw sector overlay (only if not solved)
+        if (!puzzle.solved) {
+            fill(0, 0, 0, 180);
+            rect(x, y, cellWidth, cellHeight);
+        }
+
+        // Draw grid lines
+        noFill();
+        stroke(255, 255, 255, 100);
+        strokeWeight(2);
+        rect(x, y, cellWidth, cellHeight);
+    });
 }
