@@ -139,7 +139,7 @@ async function setup() {
     textSize(32);
     text('Loading image...', width / 2, height / 2);
 
-    imageOfTheDay = await loadImage('/images/' + iotd);
+    imageOfTheDay = await loadImage('./images/' + iotd);
 
     // Pre-create blurred sector images based on original image dimensions
     forEachPuzzle((puzzle, index, x, y, cellWidth, cellHeight) => {
