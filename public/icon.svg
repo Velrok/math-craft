@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#2196F3"/>
+
+  <!-- Multiplication symbol (×) -->
+  <g fill="#FFFFFF">
+    <rect x="140" y="236" width="232" height="40" rx="20" transform="rotate(45 256 256)"/>
+    <rect x="140" y="236" width="232" height="40" rx="20" transform="rotate(-45 256 256)"/>
+  </g>
+
+  <!-- Small numbers in corners suggesting times tables -->
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" opacity="0.7">2</text>
+  <text x="374" y="140" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" opacity="0.7">5</text>
+  <text x="100" y="405" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" opacity="0.7">7</text>
+  <text x="374" y="405" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#FFFFFF" opacity="0.7">9</text>
+</svg>
